@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Prova1.jnlp">
+  <information>
+    <title>Prova1</title>
+    <vendor>2018122760372</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Prova1.jar" size="8527" download="eager" />
+  </resources>
+  <application-desc main-class="prova1.Prova"  name="Prova1" >
+  </application-desc>
+  <update check="always"/>
+</jnlp>
