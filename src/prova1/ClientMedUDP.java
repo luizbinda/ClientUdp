@@ -3,18 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package clientmedudp;
+package prova1;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,6 +33,9 @@ public class ClientMedUDP extends javax.swing.JFrame {
     public ClientMedUDP() {
         initComponents();
         this.port = 5001;
+        AwaitServeResponse client = new AwaitServeResponse(this.port, rootPane);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        executorService.submit(client);
     }
 
     /**
@@ -69,7 +74,6 @@ public class ClientMedUDP extends javax.swing.JFrame {
         jComboBoxespecialidade.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "selecione uma doença ...", "doença 1", "doença 2", "doença 3", "doença 4", "doença 5", "doença 6" }));
         jComboBoxespecialidade.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxespecialidadeActionPerformed(evt);
             }
         });
 
@@ -259,16 +263,33 @@ public class ClientMedUDP extends javax.swing.JFrame {
         }
 
     }                                              
-
-    private void jComboBoxespecialidadeActionPerformed(java.awt.event.ActionEvent evt) {                                                       
-        // TODO add your handling code here:
-    }                                                      
     
     private Prontuario verificarDoenca() {
         if(jComboBoxespecialidade.getSelectedIndex() == 0) {
             return new Prontuario(sintomas);
         }
         return new Prontuario(sintomas, jComboBoxespecialidade.getSelectedItem().toString());
+    }
+    
+    private void awaitServeResponse() throws SocketException, UnknownHostException, IOException{
+        try (DatagramSocket clientSocket =  new DatagramSocket(this.port)){
+            byte[] buffer = new byte[1024];
+            /*
+            clientSocket.setSoTimeout(3000);
+            */
+            int i = 0;
+
+            while(true){
+                DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
+                clientSocket.receive(datagramPacket);
+                
+                String recivedMessage = new String(datagramPacket.getData());
+                System.out.println("mensagem " + i + " Recebida!");
+                System.out.println(recivedMessage);
+                i++;
+
+            }
+        }
     }
     
     private void sendSintomas() throws ClassNotFoundException {
